@@ -10,7 +10,7 @@ NOTE: Gurobi is used to solve all LPs.
 This will be slower than FBA implementations that do not worry about negative flux, but as it is at the core of the other algorithms it is being made available anyway.
 
 
-## SuperDaaave
+## SuperDaaaaave
 
 A high-speed version of the Daaaaave algorithm, written as one MILP rather than iterative LPs.
 Daaaaave is a constraint-based algorithms that seeks flux patterns which correlate with expression data.
@@ -18,9 +18,9 @@ Daaaaave is a constraint-based algorithms that seeks flux patterns which correla
 The original Daaaaave algorithm is described in:
 Lee D, Smallbone K, Dunn WB, Murabito E, Winder CL, Kell DB, Mendes P, Swainston N (2012) "Improving metabolic flux predictions using absolute gene expression data" BMC Syst Biol 6:73
 http://dx.doi.org/10.1186/1752-0509-6-73
-  
+
 The original Daaaaave algorithm is available at http://github.com/u003f/daaaaave/releases/tag/original
 
-## ComparisonDaaaave (BETA)
+## ComparisonDaaaaave (BETA)
 
-Like SuperDaaave but for relative abundance data. Maximises correlation between relative abundance and relative fluxes.
+Like SuperDaaaaave but for relative abundance data. Maximises correlation between relative abundance and relative fluxes.
