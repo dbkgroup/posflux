@@ -5,12 +5,12 @@ Python coding of algorithms for constraint-based modelling of metabolism with re
 
 NOTE: Gurobi is used to solve all LPs. A standard LP formulation is provided, so it should be relatively easy to extend the code to accommodate other solvers.
 
-Positive FBA
+# Positive FBA
 
 This will be slower than FBA implementations that do not worry about negative flux, but as it is at the core of the other algorithms it is being made available anyway.
 
 
-SuperDaaave
+# SuperDaaave
 
 A high-speed version of the Daaaaave algorithm, written as one MILP rather than iterative LPs.
 Daaaaave is a constraint-based algorithms that seeks flux patterns which correlate with expression data.
@@ -21,6 +21,6 @@ http://dx.doi.org/10.1186/1752-0509-6-73
   
 The original Daaaaave algorithm and is available at http://github.com/u003f/daaaaave/releases/tag/original
 
-ComparisonDaaaave (BETA)
+# ComparisonDaaaave (BETA)
 
 Like SuperDaaave but for relative abundance data. Maximises correlation between relative abundance and relative fluxes.
