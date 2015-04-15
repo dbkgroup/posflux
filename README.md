@@ -1,4 +1,4 @@
-# positive-flux-modelling
+# Positive Flux Modelling
 Constraint-based metabolic modelling with only positive fluxes.
 
 Python coding of algorithms for constraint-based modelling of metabolism with reactions re-written so that only positive fluxes are considered. These positive flux models consist of +S (the stoichiometric matrix), -S (all the reactions written in reverse), some fiddling with the reaction bounds to preserve original reaction directions, and sets of binary variables to ensure only one version of each reaction (+S or -S version) is active at any one time. Technically they are all MILPs, not simple linear programs.
