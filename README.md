@@ -19,7 +19,7 @@ The original Daaaaave algorithm is described in:
 Lee D, Smallbone K, Dunn WB, Murabito E, Winder CL, Kell DB, Mendes P, Swainston N (2012) "Improving metabolic flux predictions using absolute gene expression data" BMC Syst Biol 6:73
 http://dx.doi.org/10.1186/1752-0509-6-73
   
-The original Daaaaave algorithm and is available at http://github.com/u003f/daaaaave/releases/tag/original
+The original Daaaaave algorithm is available at http://github.com/u003f/daaaaave/releases/tag/original
 
 # ComparisonDaaaave (BETA)
 
