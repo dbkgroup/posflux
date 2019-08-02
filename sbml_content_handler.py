@@ -30,8 +30,8 @@ class SBMLContentHandler(xml.sax.ContentHandler):
 
     def startElement(self, name, attrs):
         if name == 'species' \
-            and (not 'boundaryCondition' in attrs
-                 or attrs.getValue('boundaryCondition') == 'false'):
+            and ('boundaryCondition' not in attrs
+                 or not attrs.getValue('boundaryCondition')):
             self._species_ids.append(attrs.getValue('id'))
         elif name == 'reaction':
             self._reaction_names.append(attrs.getValue('name')
@@ -63,12 +63,15 @@ class SBMLContentHandler(xml.sax.ContentHandler):
                 min(float(attrs.getValue('value')), self._default_bound))
 
     def characters(self, content):
-        if self._in_p and (content.startswith('GENE ASSOCIATION:') or content.startswith('GENE_ASSOCIATION:')):
+        if self._in_p and (content.startswith('GENE ASSOCIATION:')
+                           or content.startswith('GENE_ASSOCIATION:')):
             self._in_gene_association = True
         if self._in_gene_association:
-            self._gene_association += content[len('GENE_ASSOCIATION:'):] if 'GENE_ASSOCIATION:' in content \
-                                else content[len('GENE ASSOCIATION:'):] if 'GENE ASSOCIATION:' in content \
-                                else content
+            self._gene_association += content[len('GENE_ASSOCIATION:'):] \
+                if 'GENE_ASSOCIATION:' in content \
+                else content[len('GENE ASSOCIATION:'):] \
+                if 'GENE ASSOCIATION:' in content \
+                else content
             self._gene_association = self._gene_association.replace('-', '_')
 
     def endElement(self, name):
