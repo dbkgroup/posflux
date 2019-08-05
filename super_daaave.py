@@ -1,38 +1,50 @@
-import LPSolver as solver
-import LPanalyse as analyse
-import Positive_Constraint_based_Modelling as pcbm
-import SBMLDataMapper as sbml_data_mapper
+'''
+(c) University of Liverpool 2019
+
+All rights reserved.
+'''
+# pylint: disable=invalid-name
+# pylint: disable=too-many-locals
+# pylint: disable=wrong-import-order
+import lp_analyse
+import lp_solver
 import matplotlib.pyplot as plt
+import positive_constraint_based_modelling
+import sbml_data_mapper
 
 
-model = 'data/yeast_5.21_MCISB.xml'
-data = 'data/genedata_75.txt'
+def main():
+    '''main method.'''
+    model = 'data/yeast_5.21_MCISB.xml'
+    data = 'data/genedata_75.txt'
 
-print '- Fetch model and map in scaled expression data'
-Smatrix, num_species, num_reactions, reaction_names, lbs, ubs, rxn_mean_expression, rxn_stdev_expression = sbml_data_mapper._read_and_map_sbml_and_expression_data(
-    model, data, 'D-glucose exchange', 16.5)
+    s_matrix, _, num_reactions, reaction_names, lbs, ubs, \
+        rxn_mean_expression, rxn_stdev_expression = \
+        sbml_data_mapper.read_and_map_sbml_and_expression_data(
+            model, data, 'D-glucose exchange', 16.5)
 
-# Update bounds (this refers to the original directionality from the SBML file)
-glucoseIndex = reaction_names.index('D-glucose exchange')
-lbs[glucoseIndex] = -16.5
-ubs[glucoseIndex] = -16.5
+    # Update bounds (refers to the original directionality from the SBML):
+    glucose_index = reaction_names.index('D-glucose exchange')
+    lbs[glucose_index] = -16.5
+    ubs[glucose_index] = -16.5
 
-print '- Build SuperDaaave problem'
-LHS, equalities, RHS, variable_types, lbs, ubs, objective = pcbm._buildSuperDaaave(
-    Smatrix, lbs, ubs, rxn_mean_expression, rxn_stdev_expression)  # Build matrix problem
+    # Build matrix problem:
+    lhs, equalities, rhs, variable_types, lbs, ubs, objective = \
+        positive_constraint_based_modelling.build_super_daaave(
+            s_matrix, lbs, ubs, rxn_mean_expression, rxn_stdev_expression)
 
-print '- Create Gurobi instance of problem'
-LP = solver._create_GurobiLP(
-    LHS, equalities, RHS, variable_types, lbs, ubs, objective)  # Build solver problem
+    # Build solver problem
+    lp = lp_solver.create_gurobi_lp(
+        lhs, equalities, rhs, variable_types, lbs, ubs, objective)
 
-print '- Solve SuperDaaave'
-LPsolved = solver._run_GurobiLP(LP)  # Solve LP
-flux = analyse._extract_flux_patterns_from_SuperDaaave(
-    LPsolved, num_reactions)  # Extract flux pattern
+    lp_solved = lp_solver.run_gurobi_lp(lp)  # Solve LP
 
-# Plotting some results
-plt.scatter(rxn_mean_expression, flux, s=rxn_stdev_expression)
-plt.title('Transcript Abundance vs Nearest Possible Flux')
-plt.xlabel('Abundance')
-plt.ylabel('Flux')
-plt.show()
+    flux = lp_analyse.extract_flux_patterns_from_super_daaave(
+        lp_solved, num_reactions)  # Extract flux pattern
+
+    # Plotting some results
+    plt.scatter(rxn_mean_expression, flux, s=rxn_stdev_expression)
+    plt.title('Transcript Abundance vs Nearest Possible Flux')
+    plt.xlabel('Abundance')
+    plt.ylabel('Flux')
+    plt.show()

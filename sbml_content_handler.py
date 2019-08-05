@@ -1,124 +1,125 @@
 '''
-Created on 23 Jun 2014
+(c) University of Liverpool 2019
 
-@author: neilswainston
+All rights reserved.
 '''
+# pylint: disable=too-many-instance-attributes
 import xml.sax
 
 
 class SBMLContentHandler(xml.sax.ContentHandler):
     '''SBML SAX parser'''
-    _species_reactions = None
-    _species_stoichiometries = None
-    _num_reactions = 0
-    _reaction_names = []
-    _lbs = []
-    _ubs = []
-    _gene_associations = []
-
-    _default_bound = None
-    _species_ids = []
-    _in_p = None
-    _in_gene_association = False
-    _in_reactants = None
-
-    _gene_association = ''
 
     def __init__(self, _default_bound):
         xml.sax.ContentHandler.__init__(self)
-        self._default_bound = _default_bound
+        self.__default_bound = _default_bound
+        self.__species_reactions = None
+        self.__species_stoichiometries = None
+        self.__num_species = 0
+        self.__num_reactions = 0
+        self.__reaction_names = []
+        self.__lbs = []
+        self.__ubs = []
+        self.__gene_associations = []
+
+        self.__species_ids = []
+        self.__in_p = None
+        self.__in_gene_association = False
+        self.__in_reactants = None
+
+        self.__gene_association = ''
 
     def startElement(self, name, attrs):
         if name == 'species' \
             and ('boundaryCondition' not in attrs
                  or not attrs.getValue('boundaryCondition')):
-            self._species_ids.append(attrs.getValue('id'))
+            self.__species_ids.append(attrs.getValue('id'))
         elif name == 'reaction':
-            self._reaction_names.append(attrs.getValue('name')
-                                        if 'name' in attrs else '')
+            self.__reaction_names.append(attrs.getValue('name')
+                                         if 'name' in attrs else '')
         elif name == 'p':
-            self._in_p = True
+            self.__in_p = True
         elif name == 'listOfReactants':
-            self._in_reactants = True
+            self.__in_reactants = True
         elif name == 'listOfProducts':
-            self._in_reactants = False
+            self.__in_reactants = False
         elif name == 'speciesReference':
             species_id = attrs.getValue('species')
 
-            if species_id in self._species_ids:
-                i = self._species_ids.index(species_id)
+            if species_id in self.__species_ids:
+                i = self.__species_ids.index(species_id)
 
                 stoichiometry = float(attrs.getValue('stoichiometry')) \
                     if 'stoichiometry' in attrs else 1
 
-                self._species_reactions[i].append(self._num_reactions)
-                self._species_stoichiometries[i].append(
-                    -stoichiometry if self._in_reactants else stoichiometry)
+                self.__species_reactions[i].append(self.__num_reactions)
+                self.__species_stoichiometries[i].append(
+                    -stoichiometry if self.__in_reactants else stoichiometry)
 
         elif name == 'parameter' and attrs.getValue('id') == 'LOWER_BOUND':
-            self._lbs.append(
-                max(float(attrs.getValue('value')), -self._default_bound))
+            self.__lbs.append(
+                max(float(attrs.getValue('value')), -self.__default_bound))
         elif name == 'parameter' and attrs.getValue('id') == 'UPPER_BOUND':
-            self._ubs.append(
-                min(float(attrs.getValue('value')), self._default_bound))
+            self.__ubs.append(
+                min(float(attrs.getValue('value')), self.__default_bound))
 
     def characters(self, content):
-        if self._in_p and (content.startswith('GENE ASSOCIATION:')
-                           or content.startswith('GENE_ASSOCIATION:')):
-            self._in_gene_association = True
-        if self._in_gene_association:
-            self._gene_association += content[len('GENE_ASSOCIATION:'):] \
+        if self.__in_p and (content.startswith('GENE ASSOCIATION:')
+                            or content.startswith('GENE_ASSOCIATION:')):
+            self.__in_gene_association = True
+        if self.__in_gene_association:
+            self.__gene_association += content[len('GENE_ASSOCIATION:'):] \
                 if 'GENE_ASSOCIATION:' in content \
                 else content[len('GENE ASSOCIATION:'):] \
                 if 'GENE ASSOCIATION:' in content \
                 else content
-            self._gene_association = self._gene_association.replace('-', '_')
+            self.__gene_association = self.__gene_association.replace('-', '_')
 
     def endElement(self, name):
         if name == 'listOfSpecies':
-            self._num_species = len(self._species_ids)
-            self._species_reactions = [[] for _ in range(self._num_species)]
-            self._species_stoichiometries \
-                = [[] for _ in range(self._num_species)]
+            self.__num_species = len(self.__species_ids)
+            self.__species_reactions = [[] for _ in range(self.__num_species)]
+            self.__species_stoichiometries \
+                = [[] for _ in range(self.__num_species)]
         elif name == 'p':
-            self._in_p = False
+            self.__in_p = False
 
-            if self._in_gene_association:
-                self._in_gene_association = False
-                self._gene_associations.append(self._gene_association)
-                self._gene_association = ''
+            if self.__in_gene_association:
+                self.__in_gene_association = False
+                self.__gene_associations.append(self.__gene_association)
+                self.__gene_association = ''
 
         elif name == 'reaction':
-            self._num_reactions = self._num_reactions + 1
+            self.__num_reactions = self.__num_reactions + 1
 
     def get_species_reactions(self):
         '''TODO'''
-        return self._species_reactions
+        return self.__species_reactions
 
     def get_species_stoichiometries(self):
         '''TODO'''
-        return self._species_stoichiometries
+        return self.__species_stoichiometries
 
     def get_num_species(self):
         '''TODO'''
-        return self._num_species
+        return self.__num_species
 
     def get_num_reactions(self):
         '''TODO'''
-        return self._num_reactions
+        return self.__num_reactions
 
     def get_reaction_names(self):
         '''TODO'''
-        return self._reaction_names
+        return self.__reaction_names
 
     def get_lbs(self):
         '''TODO'''
-        return self._lbs
+        return self.__lbs
 
     def get_ubs(self):
         '''TODO'''
-        return self._ubs
+        return self.__ubs
 
     def get_gene_associations(self):
         '''TODO'''
-        return self._gene_associations
+        return self.__gene_associations

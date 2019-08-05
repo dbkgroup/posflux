@@ -3,15 +3,19 @@
 
 All rights reserved.
 '''
+# pylint: disable=invalid-name
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-locals
 from gurobipy import Model, GRB, LinExpr
 
 
-def _run_gurobi_lp(lp):
+def run_gurobi_lp(lp):
+    '''Run Gurobi.'''
     lp.optimize()
     return lp
 
 
-def _create_gurobi_lp(lhs, equalities, rhs, variable_types, lbs, ubs, objs):
+def create_gurobi_lp(lhs, equalities, rhs, variable_types, lbs, ubs, objs):
     '''
     lhs				is a CSR matrix of size c * v (constraints * variables)
                     with nonzero coefficients
